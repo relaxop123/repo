@@ -1,54 +1,50 @@
-require('dotenv').config();
 const express = require('express');
 const nodemailer = require('nodemailer');
 const cors = require('cors');
-const bodyParser = require('body-parser');
+const dotenv = require('dotenv');
+dotenv.config();
 
 const app = express();
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
 
-app.post('/track', async (req, res) => {
-    const { latitude, longitude, accuracy, ip } = req.body;
-
-    if (!latitude || !longitude) {
-        return res.status(400).json({ error: "Coordonnées GPS manquantes" });
-    }
-
-    const googleMapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
-
-    // Configurer Nodemailer
-    const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS
-        }
-    });
-
-    const mailOptions = {
-        from: process.env.EMAIL_USER,
-        to: 'totomama123@gmail.com',
-        subject: 'Nouvelle localisation reçue',
-        text: `Position GPS reçue :
-Latitude: ${latitude}
-Longitude: ${longitude}
-Précision: ${accuracy}m
-IP: ${ip}
-
-Google Maps: ${googleMapsLink}`
-    };
-
-    try {
-        await transporter.sendMail(mailOptions);
-        console.log("Email envoyé avec succès !");
-        res.json({ message: "Position envoyée par email !" });
-    } catch (error) {
-        console.error("Erreur d'envoi de l'email :", error);
-        res.status(500).json({ error: "Erreur d'envoi de l'email" });
+// Configuration du transporteur pour envoyer l'email
+const transporter = nodemailer.createTransport({
+    service: 'gmail', // Utilise Gmail, mais tu peux changer pour un autre service
+    auth: {
+        user: process.env.EMAIL_USER, // Ton adresse email
+        pass: process.env.EMAIL_PASS  // Le mot de passe ou le mot de passe spécifique à l'application
     }
 });
 
-// Lancer le serveur
+// Endpoint pour recevoir la localisation et envoyer l'email
+app.post('/track', (req, res) => {
+    const { latitude, longitude, accuracy } = req.body;
+    
+    // Créer un lien Google Maps
+    const googleMapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
+
+    // Préparer l'email
+    const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: 'totomama123@gmail.com',  // Destinataire
+        subject: 'Localisation de l\'appareil',
+        text: `Voici la localisation de l'appareil : \n\n Latitude: ${latitude} \n Longitude: ${longitude} \n Précision: ${accuracy}m \n\nCliquez ici pour voir sur Google Maps : ${googleMapsLink}`
+    };
+
+    // Envoyer l'email
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.log('Erreur d\'envoi d\'email :', error);
+            return res.status(500).json({ message: 'Erreur d\'envoi d\'email' });
+        }
+        console.log('Email envoyé : ' + info.response);
+        res.status(200).json({ message: 'Email envoyé avec succès' });
+    });
+});
+
+// Démarrer le serveur
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Serveur en écoute sur le port ${PORT}`));
+app.listen(PORT, () => {
+    console.log(`Serveur en écoute sur le port ${PORT}`);
+});
