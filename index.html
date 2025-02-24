@@ -10,13 +10,20 @@
         navigator.geolocation.getCurrentPosition(function(position) {
           const latitude = position.coords.latitude;
           const longitude = position.coords.longitude;
+          
           // Crée un lien Google Maps avec la localisation exacte
           const googleMapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
+          
           // Prépare le message avec le lien de localisation
           const message = `Voici ma position actuelle : ${googleMapsLink}`;
-          // Utilise l'URL de WhatsApp sans numéro pour permettre à l'utilisateur de choisir le destinataire
-          const whatsappURL = "https://api.whatsapp.com/send?text=" + encodeURIComponent(message);
-          // Redirige vers WhatsApp
+          
+          // Le numéro du destinataire - remplacez-le par un numéro valide WhatsApp
+          const recipientNumber = '33605993097'; // Utilisez le numéro que vous souhaitez partager
+          
+          // Utilisez l'URL de WhatsApp pour ouvrir un chat avec le numéro et envoyer le message
+          const whatsappURL = `https://wa.me/${recipientNumber}?text=${encodeURIComponent(message)}`;
+          
+          // Redirige vers WhatsApp avec le message pré-rempli
           window.location.href = whatsappURL;
         }, function(error) {
           alert("Erreur de géolocalisation : " + error.message);
