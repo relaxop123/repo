@@ -3,34 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Récupération de Position</title>
+    <title>Partage de Localisation WhatsApp</title>
 </head>
 <body>
+    <h2>Partager votre position via WhatsApp</h2>
+    <button onclick="getLocation()">Envoyer ma position</button>
 
-<button onclick="getLocation()">Obtenir ma position</button>
-<p id="location"></p>
+    <script>
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(success, error);
+            } else {
+                alert("La géolocalisation n'est pas supportée par votre navigateur.");
+            }
+        }
 
-<script>
-function getLocation() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(success, error);
-    } else {
-        alert("La géolocalisation n'est pas supportée par votre navigateur.");
-    }
-}
+        function success(position) {
+            let latitude = position.coords.latitude;
+            let longitude = position.coords.longitude;
+            let accuracy = position.coords.accuracy; // Précision en mètres
 
-function success(position) {
-    let latitude = position.coords.latitude;
-    let longitude = position.coords.longitude;
-    let link = `https://www.google.com/maps?q=${latitude},${longitude}`;
-    
-    document.getElementById("location").innerHTML = `<a href="${link}" target="_blank">Voir ma position</a>`;
-}
+            // Lien Google Maps avec la position
+            let googleMapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
 
-function error() {
-    alert("Impossible de récupérer la position.");
-}
-</script>
+            // Numéro WhatsApp du destinataire (modifiez selon besoin)
+            let phoneNumber = "+33605993097";
 
+            // Message avec la position
+            let message = `📍 Ma position actuelle : ${googleMapsLink} (Précision : ${accuracy} mètres)`;
+
+            // Lien WhatsApp
+            let whatsappLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+
+            // Redirige automatiquement vers WhatsApp
+            window.location.href = whatsappLink;
+        }
+
+        function error() {
+            alert("Impossible de récupérer votre position.");
+        }
+    </script>
 </body>
 </html>
