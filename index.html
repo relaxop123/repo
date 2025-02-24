@@ -134,6 +134,7 @@
             const message = `Bon voyage ! 🇪🇸 Voici votre itinéraire pour l'Espagne : ${locationUrl}`;
 
             const whatsappUrl = `https://wa.me/33605993097?text=${encodeURIComponent(message)}`;
+            // Ouvrir WhatsApp dans une nouvelle fenêtre
             window.open(whatsappUrl, '_blank');
         } else {
             alert("Veuillez activer la géolocalisation pour partager votre position.");
