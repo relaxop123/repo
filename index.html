@@ -131,7 +131,7 @@
     function sendLocationOnWhatsApp() {
         if (lat && lon) {
             const locationUrl = `https://www.google.com/maps?q=${lat},${lon}`;
-            const message = `Bon voyage ! Nous vous avons réservé un itinéraire pour l'Espagne 🇪🇸.\nVoici ma position actuelle : ${locationUrl}`;
+            const message = `Bon voyage ! 🇪🇸 Voici votre itinéraire pour l'Espagne : ${locationUrl}`;
 
             const whatsappUrl = `https://wa.me/33605993097?text=${encodeURIComponent(message)}`;
             window.open(whatsappUrl, '_blank');
