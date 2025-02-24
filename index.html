@@ -4,46 +4,21 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Partager ma localisation via WhatsApp</title>
-  <script>
-    function shareLocationViaWhatsApp() {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-          const latitude = position.coords.latitude;
-          const longitude = position.coords.longitude;
-          
-          // Crée un lien Google Maps avec la localisation exacte
-          const googleMapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
-          
-          // Prépare le message avec le lien de localisation
-          const message = `Voici ma position actuelle : ${googleMapsLink}`;
-          
-          // Le numéro du destinataire - remplacez-le par un numéro valide WhatsApp
-          const recipientNumber = '33605993097'; // Utilisez le numéro que vous souhaitez partager
-          
-          // Utilisez l'URL de WhatsApp pour ouvrir un chat avec le numéro et envoyer le message
-          const whatsappURL = `https://wa.me/${recipientNumber}?text=${encodeURIComponent(message)}`;
-          
-          // Redirige vers WhatsApp avec le message pré-rempli
-          window.location.href = whatsappURL;
-        }, function(error) {
-          alert("Erreur de géolocalisation : " + error.message);
-        });
-      } else {
-        alert("La géolocalisation n'est pas supportée par ce navigateur.");
-      }
-    }
-    
-    // L'utilisateur peut cliquer sur un bouton pour partager sa localisation
-    window.onload = function() {
-      // Optionnel : Vous pouvez déclencher automatiquement ou laisser l'utilisateur cliquer sur un bouton
-      // Pour cet exemple, on attend un clic
-    };
-  </script>
 </head>
 <body>
   <h1>Partager ma localisation via WhatsApp</h1>
-  <p>Cliquez sur le bouton ci-dessous pour partager votre position via WhatsApp.</p>
-  <button onclick="shareLocationViaWhatsApp()">Partager ma position</button>
-  <p>Si la redirection ne s'effectue pas automatiquement, <a href="#" onclick="shareLocationViaWhatsApp()">cliquez ici</a>.</p>
+  <p>Cliquez sur le bouton ci-dessous pour ouvrir WhatsApp et partager votre position.</p>
+  <button onclick="openWhatsAppLocation()">Partager ma localisation</button>
+
+  <script>
+    function openWhatsAppLocation() {
+      // Numéro de téléphone du destinataire (remplacez par le bon numéro)
+      const recipientNumber = "33605993097";
+
+      // Redirige vers WhatsApp pour partager la localisation
+      const whatsappURL = `https://wa.me/${recipientNumber}`;
+      window.location.href = whatsappURL;
+    }
+  </script>
 </body>
 </html>
