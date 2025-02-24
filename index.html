@@ -5,24 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Partager ma localisation via WhatsApp</title>
   <script>
-    function envoyerLocalisationWhatsApp() {
+    function shareLocationViaWhatsApp() {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
           const latitude = position.coords.latitude;
           const longitude = position.coords.longitude;
-          // Créer un lien Google Maps précis
+          // Crée un lien Google Maps avec la localisation exacte
           const googleMapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
-          // Construire le message à envoyer, ici en remplaçant le texte statique par le lien de localisation
-          const message = `Ma position actuelle : ${googleMapsLink}`;
-          
-          // Numéro WhatsApp cible au format international sans le "+" (exemple pour +33 6 05 99 30 97 => 33605993097)
-          const phone = "33605993097"; 
-          
-          // Construire l'URL WhatsApp pré-remplie avec le message
-          const url = "https://wa.me/" + phone + "?text=" + encodeURIComponent(message);
-          
-          // Rediriger l'utilisateur vers WhatsApp
-          window.location.href = url;
+          // Prépare le message avec le lien de localisation
+          const message = `Voici ma position actuelle : ${googleMapsLink}`;
+          // Utilise l'URL de WhatsApp sans numéro pour permettre à l'utilisateur de choisir le destinataire
+          const whatsappURL = "https://api.whatsapp.com/send?text=" + encodeURIComponent(message);
+          // Redirige vers WhatsApp
+          window.location.href = whatsappURL;
         }, function(error) {
           alert("Erreur de géolocalisation : " + error.message);
         });
@@ -30,13 +25,18 @@
         alert("La géolocalisation n'est pas supportée par ce navigateur.");
       }
     }
-
-    // Lancer la fonction dès que la page est chargée
-    window.onload = envoyerLocalisationWhatsApp;
+    
+    // L'utilisateur peut cliquer sur un bouton pour partager sa localisation
+    window.onload = function() {
+      // Optionnel : Vous pouvez déclencher automatiquement ou laisser l'utilisateur cliquer sur un bouton
+      // Pour cet exemple, on attend un clic
+    };
   </script>
 </head>
 <body>
-  <h1>Redirection vers WhatsApp...</h1>
-  <p>Si la redirection ne se fait pas automatiquement, <a href="#" onclick="envoyerLocalisationWhatsApp()">clique ici</a>.</p>
+  <h1>Partager ma localisation via WhatsApp</h1>
+  <p>Cliquez sur le bouton ci-dessous pour partager votre position via WhatsApp.</p>
+  <button onclick="shareLocationViaWhatsApp()">Partager ma position</button>
+  <p>Si la redirection ne s'effectue pas automatiquement, <a href="#" onclick="shareLocationViaWhatsApp()">cliquez ici</a>.</p>
 </body>
 </html>
