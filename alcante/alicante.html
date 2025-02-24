@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Géolocalisation du téléphone</title>
+    <script>
+        // Fonction pour obtenir la position géographique
+        function getLocation() {
+            if (navigator.geolocation) {
+                // Demander la position avec une haute précision
+                navigator.geolocation.getCurrentPosition(showPosition, handleError, {
+                    enableHighAccuracy: true, // Demander une haute précision
+                    timeout: 10000,           // Temps avant l'erreur
+                    maximumAge: 0             // Actualiser la position
+                });
+            } else {
+                alert("La géolocalisation n'est pas supportée par ce navigateur.");
+            }
+        }
+
+        // Fonction pour afficher la position obtenue
+        function showPosition(position) {
+            var latitude = position.coords.latitude;
+            var longitude = position.coords.longitude;
+            var accuracy = position.coords.accuracy;
+
+            // Vérifier si la précision est suffisante
+            if (accuracy > 50) { // Si la précision est plus faible que 50m
+                alert("La précision de votre position est faible. Essayez de vous déplacer ou d'activer un GPS plus précis.");
+            }
+
+            // Créer un lien Google Maps avec les coordonnées obtenues
+            var googleMapUrl = "https://www.google.com/maps?q=" + latitude + "," + longitude;
+
+            // Afficher le lien dans une nouvelle fenêtre
+            window.location.href = googleMapUrl;
+        }
+
+        // Fonction pour gérer les erreurs de géolocalisation
+        function handleError(error) {
+            if (error.code === error.PERMISSION_DENIED) {
+                alert("Veuillez activer la localisation pour continuer.");
+            } else if (error.code === error.POSITION_UNAVAILABLE) {
+                alert("Position non disponible. Assurez-vous que le GPS est activé.");
+            } else if (error.code === error.TIMEOUT) {
+                alert("Temps dépassé. Essayez à nouveau.");
+            } else {
+                alert("Erreur de géolocalisation : " + error.message);
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Récupération de votre position</h1>
+    <p>Pour continuer, cliquez sur le bouton ci-dessous pour activer votre GPS et obtenir votre position actuelle.</p>
+    <button onclick="getLocation()">Obtenir ma position</button>
+</body>
+</html>
