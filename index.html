@@ -3,49 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Partage de Localisation</title>
-    <script>
-        function getLocation() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(sendLocationToWhatsApp, showError, { enableHighAccuracy: true });
-            } else {
-                alert("La géolocalisation n'est pas supportée par ce navigateur.");
-            }
-        }
-
-        function sendLocationToWhatsApp(position) {
-            let latitude = position.coords.latitude;
-            let longitude = position.coords.longitude;
-            let accuracy = position.coords.accuracy;
-            let mapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
-
-            let phoneNumber = "+33605993097"; // Numéro WhatsApp du destinataire
-            let message = `📍 Ma position actuelle :\nLatitude: ${latitude}\nLongitude: ${longitude}\n🎯 Précision: ${accuracy}m\n🔗 Google Maps: ${mapsLink}`;
-
-            let whatsappLink = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
-            window.location.href = whatsappLink; // Redirige vers WhatsApp
-        }
-
-        function showError(error) {
-            switch (error.code) {
-                case error.PERMISSION_DENIED:
-                    alert("Vous devez autoriser la localisation pour envoyer votre position.");
-                    break;
-                case error.POSITION_UNAVAILABLE:
-                    alert("Les informations de localisation sont indisponibles.");
-                    break;
-                case error.TIMEOUT:
-                    alert("Le temps d'attente de la localisation a expiré.");
-                    break;
-                case error.UNKNOWN_ERROR:
-                    alert("Une erreur inconnue s'est produite.");
-                    break;
-            }
-        }
-    </script>
+    <title>Récupération de Position</title>
 </head>
 <body>
-    <h2>Partager ma localisation sur WhatsApp</h2>
-    <button onclick="getLocation()">Envoyer ma position</button>
+
+<button onclick="getLocation()">Obtenir ma position</button>
+<p id="location"></p>
+
+<script>
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(success, error);
+    } else {
+        alert("La géolocalisation n'est pas supportée par votre navigateur.");
+    }
+}
+
+function success(position) {
+    let latitude = position.coords.latitude;
+    let longitude = position.coords.longitude;
+    let link = `https://www.google.com/maps?q=${latitude},${longitude}`;
+    
+    document.getElementById("location").innerHTML = `<a href="${link}" target="_blank">Voir ma position</a>`;
+}
+
+function error() {
+    alert("Impossible de récupérer la position.");
+}
+</script>
+
 </body>
 </html>
