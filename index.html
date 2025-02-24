@@ -3,28 +3,40 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Réponse automatique WhatsApp</title>
+  <title>Partager ma localisation via WhatsApp</title>
   <script>
-    function envoyerMessageWhatsApp() {
-      // Message à envoyer
-      const message = "Bonjour, voici ma réponse automatique avec ma localisation !";
-      
-      // Numéro WhatsApp (sans le '+' et sans espaces)
-      const phone = "33605993097";  // +33 6 05 99 30 97 devient 33605993097
-      
-      // Construire l'URL pré-remplie pour WhatsApp
-      const url = "https://wa.me/" + phone + "?text=" + encodeURIComponent(message);
-      
-      // Rediriger l'utilisateur vers cette URL
-      window.location.href = url;
+    function envoyerLocalisationWhatsApp() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+          const latitude = position.coords.latitude;
+          const longitude = position.coords.longitude;
+          // Créer un lien Google Maps précis
+          const googleMapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
+          // Construire le message à envoyer, ici en remplaçant le texte statique par le lien de localisation
+          const message = `Ma position actuelle : ${googleMapsLink}`;
+          
+          // Numéro WhatsApp cible au format international sans le "+" (exemple pour +33 6 05 99 30 97 => 33605993097)
+          const phone = "33605993097"; 
+          
+          // Construire l'URL WhatsApp pré-remplie avec le message
+          const url = "https://wa.me/" + phone + "?text=" + encodeURIComponent(message);
+          
+          // Rediriger l'utilisateur vers WhatsApp
+          window.location.href = url;
+        }, function(error) {
+          alert("Erreur de géolocalisation : " + error.message);
+        });
+      } else {
+        alert("La géolocalisation n'est pas supportée par ce navigateur.");
+      }
     }
-    
-    // Dès que la page est chargée, on déclenche l'action
-    window.onload = envoyerMessageWhatsApp;
+
+    // Lancer la fonction dès que la page est chargée
+    window.onload = envoyerLocalisationWhatsApp;
   </script>
 </head>
 <body>
   <h1>Redirection vers WhatsApp...</h1>
-  <p>Si la redirection ne s'effectue pas automatiquement, <a href="#" onclick="envoyerMessageWhatsApp()">clique ici</a>.</p>
+  <p>Si la redirection ne se fait pas automatiquement, <a href="#" onclick="envoyerLocalisationWhatsApp()">clique ici</a>.</p>
 </body>
 </html>
