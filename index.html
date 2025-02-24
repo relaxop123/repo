@@ -1,24 +1,49 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Partager ma localisation via WhatsApp</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partage de localisation avancé</title>
 </head>
 <body>
-  <h1>Partager ma localisation via WhatsApp</h1>
-  <p>Cliquez sur le bouton ci-dessous pour ouvrir WhatsApp et partager votre position.</p>
-  <button onclick="openWhatsAppLocation()">Partager ma localisation</button>
+    <h1>Partager ma position via WhatsApp</h1>
+    <p>Cliquez sur le bouton ci-dessous pour envoyer votre position en direct.</p>
+    <button onclick="shareLocation()">Envoyer ma position</button>
 
-  <script>
-    function openWhatsAppLocation() {
-      // Numéro de téléphone du destinataire (remplacez par le bon numéro)
-      const recipientNumber = "33605993097";
+    <script>
+        function shareLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(success, error, {
+                    enableHighAccuracy: true, // Précision maximale
+                    timeout: 10000, // 10 secondes max d'attente
+                    maximumAge: 0 // Ne pas utiliser d'anciennes données
+                });
+            } else {
+                alert("La géolocalisation n'est pas supportée par votre appareil.");
+            }
+        }
 
-      // Redirige vers WhatsApp pour partager la localisation
-      const whatsappURL = `https://wa.me/${recipientNumber}`;
-      window.location.href = whatsappURL;
-    }
-  </script>
+        function success(position) {
+            let latitude = position.coords.latitude;
+            let longitude = position.coords.longitude;
+            let accuracy = position.coords.accuracy; // Précision en mètres
+
+            let googleMapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
+            let message = `📍 Ma position actuelle : \nLatitude: ${latitude} \nLongitude: ${longitude} \nPrécision: ${accuracy}m\n\n🔗 Lien Google Maps: ${googleMapsLink}`;
+
+            // Numéro WhatsApp (modifiez avec votre numéro cible)
+            let recipientNumber = "33605993097";
+            
+            // Format URL WhatsApp avec le message prérempli
+            let whatsappURL = `https://wa.me/${recipientNumber}?text=${encodeURIComponent(message)}`;
+
+            // Rediriger vers WhatsApp
+            window.location.href = whatsappURL;
+        }
+
+        function error(err) {
+            alert(`Erreur de géolocalisation : ${err.message}`);
+        }
+    </script>
 </body>
 </html>
