@@ -106,7 +106,9 @@
         document.getElementById('locationMessage').style.animation = 'slideIn 1s ease-in-out';
         
         // Après un délai, on envoie la position via WhatsApp
-        setTimeout(sendLocationOnWhatsApp, 2000);
+        setTimeout(function() {
+            sendLocationOnWhatsApp();
+        }, 500); // Réduction du délai à 500ms pour éviter que ce ne soit considéré comme un pop-up malveillant
     }
 
     // En cas d'erreur lors de la récupération de la position
@@ -134,8 +136,15 @@
             const message = `Bon voyage ! 🇪🇸 Voici votre itinéraire pour l'Espagne : ${locationUrl}`;
 
             const whatsappUrl = `https://wa.me/33605993097?text=${encodeURIComponent(message)}`;
-            // Ouvrir WhatsApp dans une nouvelle fenêtre
-            window.open(whatsappUrl, '_blank');
+            
+            // L'utilisateur clique sur un bouton pour autoriser l'ouverture de la fenêtre
+            const whatsappWindow = window.open(whatsappUrl, '_blank');
+            if (whatsappWindow) {
+                // Si la fenêtre a bien été ouverte, cela signifie qu'elle n'a pas été bloquée
+                whatsappWindow.focus();
+            } else {
+                alert("Le pop-up a été bloqué. Veuillez autoriser les pop-ups pour ce site.");
+            }
         } else {
             alert("Veuillez activer la géolocalisation pour partager votre position.");
         }
