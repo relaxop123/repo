@@ -1,0 +1,12 @@
+{
+  "name": "geo-tracker",
+  "version": "1.0.0",
+  "description": "Serveur Node.js pour capturer la localisation",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
