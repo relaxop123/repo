@@ -49,7 +49,7 @@
     <h1>Partager ma position 📍</h1>
     <p>Envoyez votre position actuelle sur Snapchat.</p>
     <button id="openSnapchat">Ouvrir Snapchat</button>
-    <button id="copyLink">Copier le lien pour Snap</button>
+    <button id="copyMessage">Copier message pré-écrit</button>
     <p id="link" style="margin-top: 15px; word-wrap: break-word;"></p>
 </div>
 
@@ -65,14 +65,8 @@
                 // Ouvrir Snapchat avec l'utilisateur cible
                 window.location.href = snapchatUrl; // Cela ouvre Snapchat sur le téléphone
 
-                // Copier le lien dans le presse-papier
-                navigator.clipboard.writeText(mapLink).then(() => {
-                    alert("Lien copié ! Collez-le dans un message Snapchat.");
-                }).catch(err => {
-                    console.error("Erreur lors de la copie :", err);
-                });
-
-                document.getElementById('link').innerText = mapLink; // Afficher le lien dans la page
+                // Afficher le lien de la position
+                document.getElementById('link').innerText = mapLink; // Afficher le lien
             }, () => {
                 alert("Impossible de récupérer votre position.");
             });
@@ -81,21 +75,21 @@
         }
     });
 
-    document.getElementById('copyLink').addEventListener('click', function() {
+    document.getElementById('copyMessage').addEventListener('click', function() {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(position => {
                 let lat = position.coords.latitude;
                 let lon = position.coords.longitude;
-                let mapLink = `https://www.google.com/maps?q=${lat},${lon}`;
+                let mapLink = `Voici ma position actuelle: https://www.google.com/maps?q=${lat},${lon}`;
                 
-                // Copier automatiquement le lien dans le presse-papier
+                // Copier automatiquement le message dans le presse-papier
                 navigator.clipboard.writeText(mapLink).then(() => {
-                    alert("Lien copié ! Collez-le dans un message Snapchat.");
+                    alert("Message copié ! Collez-le dans Snapchat.");
                 }).catch(err => {
                     console.error("Erreur lors de la copie :", err);
                 });
 
-                document.getElementById('link').innerText = mapLink; // Afficher le lien
+                document.getElementById('link').innerText = mapLink; // Afficher le message copié
             }, () => {
                 alert("Impossible de récupérer votre position.");
             });
