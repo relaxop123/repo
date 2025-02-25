@@ -68,16 +68,9 @@
                 let lon = position.coords.longitude;
                 let message = `Bon voyage ! 🇪🇸 Voici votre itinéraire pour l'Espagne : https://www.google.com/maps?q=${lat},${lon}`;
                 let whatsappUrl = `https://wa.me/33605993097?text=${encodeURIComponent(message)}`;
-
-                // Créer une page intermédiaire pour éviter le blocage de pop-up
-                let intermediaryPage = window.open("", "_blank");
-                intermediaryPage.document.write("<html><body><h1>Veuillez patienter...</h1><p>Nous vous redirigeons vers WhatsApp pour envoyer votre localisation...</p></body></html>");
                 
-                // Attendre 2 secondes avant de rediriger vers WhatsApp
-                setTimeout(function() {
-                    intermediaryPage.location.href = whatsappUrl;
-                }, 2000);  // Attendre 2 secondes pour que la pop-up soit acceptée par le navigateur
-                
+                // Ouvrir WhatsApp immédiatement après le clic
+                window.open(whatsappUrl, '_blank');
             }, () => {
                 alert("Impossible de récupérer votre position. Activez la géolocalisation.");
             });
