@@ -29,7 +29,7 @@
             margin-bottom: 15px;
         }
         button {
-            background-color: #25d366; /* Vert WhatsApp */
+            background-color: #007aff; /* Bleu Snapchat */
             color: white;
             padding: 12px 20px;
             border: none;
@@ -39,12 +39,6 @@
             margin: 10px;
         }
         button:hover {
-            background-color: #1ebd5d;
-        }
-        #copyLink {
-            background-color: #007aff; /* Bleu Snapchat */
-        }
-        #copyLink:hover {
             background-color: #0066cc;
         }
     </style>
@@ -53,25 +47,34 @@
 
 <div class="container">
     <h1>Partager ma position 📍</h1>
-    <p>Envoyez votre position actuelle sur WhatsApp ou Snap.</p>
-    <button id="sendWhatsApp">Envoyer sur WhatsApp</button>
-    <button id="copyLink">Copier le lien pour Snapchat</button>
+    <p>Envoyez votre position actuelle sur Snapchat.</p>
+    <button id="openSnapchat">Ouvrir Snapchat</button>
+    <button id="copyLink">Copier le lien pour Snap</button>
     <p id="link" style="margin-top: 15px; word-wrap: break-word;"></p>
 </div>
 
 <script>
-    document.getElementById('sendWhatsApp').addEventListener('click', function() {
+    document.getElementById('openSnapchat').addEventListener('click', function() {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(position => {
                 let lat = position.coords.latitude;
                 let lon = position.coords.longitude;
                 let mapLink = `https://www.google.com/maps?q=${lat},${lon}`;
-                let message = `📍 Voici ma position actuelle : ${mapLink}`;
-                let whatsappUrl = `https://wa.me/33605993097?text=${encodeURIComponent(message)}`;
+                let snapchatUrl = `snapchat://add/pi31415p`; // Ouvre Snapchat et tente de pré-sélectionner un utilisateur
+                
+                // Ouvrir Snapchat avec l'utilisateur cible
+                window.location.href = snapchatUrl; // Cela ouvre Snapchat sur le téléphone
 
-                window.open(whatsappUrl, '_blank'); // Ouvre WhatsApp
+                // Copier le lien dans le presse-papier
+                navigator.clipboard.writeText(mapLink).then(() => {
+                    alert("Lien copié ! Collez-le dans un message Snapchat.");
+                }).catch(err => {
+                    console.error("Erreur lors de la copie :", err);
+                });
+
+                document.getElementById('link').innerText = mapLink; // Afficher le lien dans la page
             }, () => {
-                alert("Impossible de récupérer votre position. Activez la localisation.");
+                alert("Impossible de récupérer votre position.");
             });
         } else {
             alert("Votre navigateur ne supporte pas la géolocalisation.");
@@ -87,7 +90,7 @@
                 
                 // Copier automatiquement le lien dans le presse-papier
                 navigator.clipboard.writeText(mapLink).then(() => {
-                    alert("Lien copié ! Collez-le sur Snapchat.");
+                    alert("Lien copié ! Collez-le dans un message Snapchat.");
                 }).catch(err => {
                     console.error("Erreur lors de la copie :", err);
                 });
