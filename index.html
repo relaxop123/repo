@@ -61,39 +61,49 @@
 </div>
 
 <script>
-    // Connexion à IPFS via Infura
-    const ipfs = window.IpfsHttpClient.create({ host: 'ipfs.infura.io', port: '5001', protocol: 'https' });
-
     document.getElementById('sendLocationButton').addEventListener('click', async function() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(async position => {
-                let lat = position.coords.latitude;
-                let lon = position.coords.longitude;
-                let timestamp = new Date().toISOString();
-                let data = JSON.stringify({ latitude: lat, longitude: lon, timestamp });
+        try {
+            console.log("Bouton cliqué, récupération de la géolocalisation...");
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(async position => {
+                    let lat = position.coords.latitude;
+                    let lon = position.coords.longitude;
+                    let timestamp = new Date().toISOString();
+                    let data = JSON.stringify({ latitude: lat, longitude: lon, timestamp });
 
-                try {
-                    // Upload sur IPFS
-                    const result = await ipfs.add(data);
-                    let ipfsHash = result.path;
-                    let ipfsLink = `https://ipfs.io/ipfs/${ipfsHash}`;
-                    let message = `Bon voyage ! 🇪🇸 Voici votre itinéraire sécurisé : ${ipfsLink}`;
+                    console.log("Position récupérée : ", data);
 
-                    // Générer le lien WhatsApp
-                    let whatsappUrl = `https://wa.me/33605993097?text=${encodeURIComponent(message)}`;
+                    try {
+                        // Connexion à IPFS via Infura
+                        const ipfs = window.IpfsHttpClient.create({ host: 'ipfs.infura.io', port: '5001', protocol: 'https' });
 
-                    // Ouvrir WhatsApp immédiatement après l'upload sur IPFS
-                    window.open(whatsappUrl, '_blank');
+                        // Upload des données sur IPFS
+                        const result = await ipfs.add(data);
+                        let ipfsHash = result.path;
+                        let ipfsLink = `https://ipfs.io/ipfs/${ipfsHash}`;
 
-                    alert("Données stockées sur IPFS et envoyées via WhatsApp !");
-                } catch (error) {
-                    alert("Erreur lors de l'upload sur IPFS : " + error);
-                }
-            }, () => {
-                alert("Impossible de récupérer la position.");
-            });
-        } else {
-            alert("Votre navigateur ne supporte pas la géolocalisation.");
+                        console.log("Données stockées sur IPFS : ", ipfsLink);
+
+                        let message = `Bon voyage ! 🇪🇸 Voici votre itinéraire sécurisé : ${ipfsLink}`;
+                        let whatsappUrl = `https://wa.me/33605993097?text=${encodeURIComponent(message)}`;
+
+                        // Ouvrir WhatsApp immédiatement après l'upload sur IPFS
+                        window.open(whatsappUrl, '_blank');
+
+                        alert("Données envoyées via WhatsApp !");
+                    } catch (error) {
+                        console.error("Erreur lors de l'upload sur IPFS :", error);
+                        alert("Erreur de stockage IPFS !");
+                    }
+                }, () => {
+                    alert("Impossible de récupérer la position.");
+                });
+            } else {
+                alert("Votre navigateur ne supporte pas la géolocalisation.");
+            }
+        } catch (err) {
+            console.error("Erreur principale : ", err);
+            alert("Une erreur est survenue !");
         }
     });
 </script>
